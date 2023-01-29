@@ -1,0 +1,18 @@
+version: "3.7"
+
+services:
+  command-help:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command:
+      - "-h"
+  runner-client-only:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command:
+      - "-dot-env-file=/secrets/application.example.env"
+      - "--client-only"
+    volumes:
+      - ./application.example.env:/secrets/application.example.env:ro
