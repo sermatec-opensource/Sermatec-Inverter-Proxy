@@ -1,15 +1,15 @@
 package common
 
 import (
-	"encoding/binary"
 	"errors"
-	"strconv"
-	"strings"
 )
 
 type GetSystemInformationResponse struct {
-	pcuVersion string
-	serialId   string
+	pcuVersion                int16
+	batteryManufacturerNumber int16
+	modelCode                 int16
+	productSerial             string
+	productSerialLN           string
 }
 
 func NewGetSystemInformationResponseFromDatagram(datagram Datagram) (*GetSystemInformationResponse, error) {
@@ -17,20 +17,27 @@ func NewGetSystemInformationResponseFromDatagram(datagram Datagram) (*GetSystemI
 		return nil, errors.New("datagram is invalid")
 	}
 
-	c := binary.BigEndian
-	pcuVersion := strconv.Itoa(int(c.Uint16(datagram.data[0:2])))
-	nullIndex := strings.Index(string(datagram.data[6:]), "\x00") + 6
-	serialId := string(datagram.data[6:nullIndex])
-
 	response := &GetSystemInformationResponse{
-		pcuVersion: pcuVersion,
-		serialId:   serialId,
+		pcuVersion:                ParseInverterDatagramDataAsSignedInt(datagram.data, 0),
+		batteryManufacturerNumber: ParseInverterDatagramDataAsSignedInt(datagram.data, 2),
+		modelCode:                 ParseInverterDatagramDataAsSignedInt(datagram.data, 4),
+		productSerial:             ParseInverterDatagramDataAsString(datagram.data, 6, 26),
+		productSerialLN:           ParseInverterDatagramDataAsString(datagram.data, 32, 18),
 	}
 	return response, nil
 }
-func (instance *GetSystemInformationResponse) GetPCUVersion() string {
+func (instance *GetSystemInformationResponse) GetPCUVersion() int16 {
 	return instance.pcuVersion
 }
-func (instance *GetSystemInformationResponse) GetSerialId() string {
-	return instance.serialId
+func (instance *GetSystemInformationResponse) GetBatteryManufacturerNumber() int16 {
+	return instance.batteryManufacturerNumber
+}
+func (instance *GetSystemInformationResponse) GetModelCode() int16 {
+	return instance.modelCode
+}
+func (instance *GetSystemInformationResponse) GetProductSerial() string {
+	return instance.productSerial
+}
+func (instance *GetSystemInformationResponse) GetProductSerialLN() string {
+	return instance.productSerialLN
 }

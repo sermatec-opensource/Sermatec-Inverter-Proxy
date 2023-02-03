@@ -77,6 +77,10 @@ func ParseInverterDatagramDataAsUnsignedInt(data []byte, firstByteAddress uint16
 	endAddress := firstByteAddress + 2
 	return binary.BigEndian.Uint16(data[firstByteAddress:endAddress])
 }
+func ParseInverterDatagramDataAsString(data []byte, firstByteAddress uint16, strLen uint16) string {
+	endAddress := firstByteAddress + strLen
+	return string(data[firstByteAddress:endAddress])
+}
 
 func ParseInverterDatagramDataAsSignedInt(data []byte, firstByteAddress uint16) int16 {
 	endAddress := firstByteAddress + 2

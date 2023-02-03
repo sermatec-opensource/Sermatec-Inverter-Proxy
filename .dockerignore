@@ -1,0 +1,10 @@
+.github/
+.idea/
+docs/
+.gitignore
+application.env
+application.example.env
+application.private.env
+docker-compose.yml
+Makefile
+README.md

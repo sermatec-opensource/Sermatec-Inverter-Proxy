@@ -12,7 +12,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     command:
-      - "-dot-env-file=/secrets/application.example.env"
-      - "--client-only"
+      - "-dot-env-file=/secrets/application.env"
+      - "--client"
     volumes:
-      - ./application.example.env:/secrets/application.example.env:ro
+      - ./application.env:/secrets/application.env:ro

@@ -29,7 +29,8 @@ func (instance Client) send(query []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	conn, err := net.DialTCP("tcp", nil, tcpAddr)
+	dialer := net.Dialer{Timeout: 5 * time.Second}
+	conn, err := dialer.Dial("tcp", tcpAddr.String())
 	if err != nil {
 		log.Printf("Dial failed: %s", err.Error())
 		return nil, err
@@ -90,8 +91,8 @@ func (instance Client) getBatteryInformation() (*common.GetBatteryInformationRes
 
 	return response, nil
 }
-func (instance Client) getGridAndPVAndBackupInformation() (*common.GetGridAndPVAndBackupInformationResponse, error) {
-	request := common.NewRequestDatagram(common.NewGetGridAndPVAndBackupInformationCommand())
+func (instance Client) getControlCabinetInformation() (*common.GetControlCabinetInformationResponse, error) {
+	request := common.NewRequestDatagram(common.NewGetControlCabinetInformationCommand())
 	rawData, err := instance.send(request.ToBytes())
 	if err != nil {
 		return nil, err
@@ -100,7 +101,7 @@ func (instance Client) getGridAndPVAndBackupInformation() (*common.GetGridAndPVA
 	if responseDatagram.GetCommand() != request.GetCommand() {
 		return nil, errors.New("response does not match with request command, probably an error from inverter")
 	}
-	response, err := common.NewGetGridAndPVAndBackupInformationFromDatagram(*responseDatagram)
+	response, err := common.NewGetControlCabinetInformationFromDatagram(*responseDatagram)
 	if err != nil {
 		return nil, err
 	}
@@ -124,16 +125,16 @@ func (instance Client) GetData(pollingTime int, informationChan chan common.Inve
 			log.Printf("An error has occurred %v", err)
 		}
 
-		gridAndLoadInformation, err := instance.getGridAndPVAndBackupInformation()
+		gridAndLoadInformation, err := instance.getControlCabinetInformation()
 		if err != nil {
 			gridAndLoadInformation = nil
 			log.Printf("An error has occurred %v", err)
 		}
 
 		informationChan <- common.InverterResponseCollection{
-			SystemInformation:      systemInformation,
-			BatteryInformation:     batteryInformation,
-			GridAndLoadInformation: gridAndLoadInformation,
+			SystemInformation:         systemInformation,
+			BatteryInformation:        batteryInformation,
+			ControlCabinetInformation: gridAndLoadInformation,
 		}
 		time.Sleep(time.Duration(pollingTime) * time.Second)
 	}

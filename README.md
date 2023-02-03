@@ -23,11 +23,36 @@ There is few modes for running this application :
 
 ## Usage
 
-There is no build for this application right now, needs docker to run.
+There is no build for this application right now, needs **docker** to run.
 It builds and run the command on the fly.
 There is a makefile that provide you easier access to different running modes.
 
-### Command line arguments
+#### Generating env file
+Necessary to generate the first application.private.env file, see below.
+```bash
+make generate_env_file
+```
+
+#### Build the application
+Useful only if you want to test the building process (dev purpose).
+```bash
+make build
+```
+
+#### Showing command line help
+Self-explanatory
+```bash
+make help
+```
+
+#### Running the binary in client only mode
+This mode will poll the inverter on a regular basis (**CLIENT_POLLING_INTERVAL**) and display data retrieved on the console output.
+```bash
+make run-client-only
+```
+![Console](./docs/assets/console.png)
+
+### Binary Command line arguments
 
 | argument                       | description                                           | optional / required | 
 |--------------------------------|-------------------------------------------------------|---------------------|
@@ -39,7 +64,12 @@ There is a makefile that provide you easier access to different running modes.
 | `-h`                           | show this help                                        | optional            |
 
 ### DotEnv file
- 
+
+The env file is generating at each run, concatenating `./application.example.env` with `./application.private.env` into a `./application.env`.
+ * `./application.example.env` => provided in the repository with fake example data.
+ * `./application.private.env` => created if not exists at first run using `make generate_env_file` recipes, excluded from commit, place here your specific setup (ip, polling interval, etc...).
+ * `./application.env` => generated at each run, don't override date here, it will be useless, this env file is provided to application binary through docker-compose services.
+
 ```env
 INVERTER_HOST=<INVERTER IP OT HOST>
 INVERTER_PORT=<INVERTER PORT USUALLY 8899>
