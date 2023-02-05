@@ -72,11 +72,56 @@ func ParseInverterDatagramDataAsUnsignedFloat(data []byte, firstByteAddress uint
 func ParseInverterDatagramDataAsSignedFloat(data []byte, firstByteAddress uint16, factor uint16) float32 {
 	return float32(ParseInverterDatagramDataAsSignedInt(data, firstByteAddress)) / float32(factor)
 }
+func ParseInverterDatagramDataAsSignedLongFloat(data []byte, firstByteAddress uint16, factor uint16) float32 {
+	return float32(ParseInverterDatagramDataAsSignedLong(data, firstByteAddress)) / float32(factor)
+}
 
 func ParseInverterDatagramDataAsUnsignedInt(data []byte, firstByteAddress uint16) uint16 {
 	endAddress := firstByteAddress + 2
 	return binary.BigEndian.Uint16(data[firstByteAddress:endAddress])
 }
+
+func ParseInverterDatagramDataAsSignedLong(data []byte, firstByteAddress uint16) int32 {
+	endAddress := firstByteAddress + 4
+	var value int32
+	err := binary.Read(bytes.NewReader(data[firstByteAddress:endAddress]), binary.BigEndian, &value)
+	if err != nil {
+		log.Printf("An error has occurred when parsing data as signed long: %v", err)
+		return 0
+	}
+	return value
+}
+
+func ParseInverterDatagramDataAsRepeatedSignedFloat(data []byte, firstByteAddress uint16, factor uint16, repeat int) []float32 {
+	var value []float32
+	var currentFirstByteAddress uint16
+	for i := 0; i < repeat; i++ {
+		currentFirstByteAddress = firstByteAddress + 2*uint16(i)
+		value = append(value, ParseInverterDatagramDataAsSignedFloat(data, currentFirstByteAddress, factor))
+	}
+	return value
+}
+
+func ParseInverterDatagramDataAsRepeatedSignedInt(data []byte, firstByteAddress uint16, repeat int) []int16 {
+	var value []int16
+	var currentFirstByteAddress uint16
+	for i := 0; i < repeat; i++ {
+		currentFirstByteAddress = firstByteAddress + 2*uint16(i)
+		value = append(value, ParseInverterDatagramDataAsSignedInt(data, currentFirstByteAddress))
+	}
+	return value
+}
+
+func ParseInverterDatagramDataAsRepeatedSignedLong(data []byte, firstByteAddress uint16, repeat int) []int32 {
+	var value []int32
+	var currentFirstByteAddress uint16
+	for i := 0; i < repeat; i++ {
+		currentFirstByteAddress = firstByteAddress + 4*uint16(i)
+		value = append(value, ParseInverterDatagramDataAsSignedLong(data, currentFirstByteAddress))
+	}
+	return value
+}
+
 func ParseInverterDatagramDataAsString(data []byte, firstByteAddress uint16, strLen uint16) string {
 	endAddress := firstByteAddress + strLen
 	return string(data[firstByteAddress:endAddress])

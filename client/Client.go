@@ -44,7 +44,7 @@ func (instance Client) send(query []byte) ([]byte, error) {
 
 	log.Printf("write to server (hex): %x", query)
 
-	rawData := make([]byte, 1024)
+	rawData := make([]byte, 4096)
 	_, err = conn.Read(rawData)
 	if err != nil {
 		log.Printf("Write to server failed: %s", err.Error())
@@ -109,6 +109,24 @@ func (instance Client) getControlCabinetInformation() (*common.GetControlCabinet
 	return response, nil
 }
 
+func (instance Client) getTotalPowerData() (*common.GetTotalPowerDataResponse, error) {
+	request := common.NewRequestDatagram(common.NewGetTotalPowerDataCommand())
+	rawData, err := instance.send(request.ToBytes())
+	if err != nil {
+		return nil, err
+	}
+	responseDatagram := common.GetDatagramFromRawData(rawData)
+	if responseDatagram.GetCommand() != request.GetCommand() {
+		return nil, errors.New("response does not match with request command, probably an error from inverter")
+	}
+	response, err := common.NewGetTotalPowerDataFromDatagram(*responseDatagram)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
 func (instance Client) GetData(pollingTime int, informationChan chan common.InverterResponseCollection, waitingGroup *sync.WaitGroup) {
 	defer waitingGroup.Done()
 	defer close(informationChan)
@@ -131,10 +149,17 @@ func (instance Client) GetData(pollingTime int, informationChan chan common.Inve
 			log.Printf("An error has occurred %v", err)
 		}
 
+		totalPowerData, err := instance.getTotalPowerData()
+		if err != nil {
+			gridAndLoadInformation = nil
+			log.Printf("An error has occurred %v", err)
+		}
+
 		informationChan <- common.InverterResponseCollection{
 			SystemInformation:         systemInformation,
 			BatteryInformation:        batteryInformation,
 			ControlCabinetInformation: gridAndLoadInformation,
+			TotalPowerData:            totalPowerData,
 		}
 		time.Sleep(time.Duration(pollingTime) * time.Second)
 	}
