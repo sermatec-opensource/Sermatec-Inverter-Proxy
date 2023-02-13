@@ -29,5 +29,7 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 VOLUME /secrets
 
+EXPOSE 80
+
 WORKDIR /app
 ENTRYPOINT [ "./SermatecProxy" ]

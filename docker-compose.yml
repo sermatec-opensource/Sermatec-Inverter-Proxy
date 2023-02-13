@@ -1,4 +1,8 @@
-version: "3.7"
+version: "3.8"
+
+networks:
+  sermatec:
+    external: true
 
 services:
   command-help:
@@ -7,6 +11,9 @@ services:
       dockerfile: ./Dockerfile
     command:
       - "-h"
+    networks:
+      - sermatec
+
   runner-client-only:
     build:
       context: .
@@ -16,3 +23,5 @@ services:
       - "--client"
     volumes:
       - ./application.env:/secrets/application.env:ro
+    networks:
+      - sermatec

@@ -16,7 +16,7 @@ var inverterLastReceivedData *common.InverterResponseCollection
 
 func logInverterCollectionData(collection common.InverterResponseCollection) {
 	if collection.SystemInformation != nil {
-		log.Println("===================System Information ====================")
+		log.Println("=================== System Information ====================")
 		log.Printf("Inverter PCU Version: %d", collection.SystemInformation.GetPCUVersion())
 		log.Printf("Inverter Battery Manufatcurer code: %d", collection.SystemInformation.GetBatteryManufacturerNumber())
 		log.Printf("Inverter Model Code: %d", collection.SystemInformation.GetModelCode())
@@ -25,7 +25,7 @@ func logInverterCollectionData(collection common.InverterResponseCollection) {
 	}
 
 	if collection.BatteryInformation != nil {
-		log.Println("===================Battery Information ====================")
+		log.Println("=================== Battery Information ====================")
 		log.Printf("Battery Voltage: %.2f V", collection.BatteryInformation.GetVoltage())
 		log.Printf("Battery Current: %.2f A", collection.BatteryInformation.GetCurrent())
 		log.Printf("Battery Temperature: %.2f °C", collection.BatteryInformation.GetTemperature())
@@ -47,7 +47,7 @@ func logInverterCollectionData(collection common.InverterResponseCollection) {
 	}
 
 	if collection.ControlCabinetInformation != nil {
-		log.Println("===================Control Cabinet Information ====================")
+		log.Println("=================== Control Cabinet Information ====================")
 		log.Printf("Device type: %d", collection.ControlCabinetInformation.GetDeviceType())
 		log.Printf("DSP High Version: %d", collection.ControlCabinetInformation.GetDSPHighVersion())
 		log.Printf("DSP Low Version: %d", collection.ControlCabinetInformation.GetDSPLowVersion())
@@ -110,6 +110,22 @@ func logInverterCollectionData(collection common.InverterResponseCollection) {
 		log.Printf("Backup Bus DC Negative Voltage : %.2f V", collection.ControlCabinetInformation.GetBackupBusDCNegativeVoltage())
 
 		log.Printf("Work Efficiency : %d", collection.ControlCabinetInformation.GetWorkEfficiency())
+	}
+
+	if collection.TotalPowerData != nil {
+		log.Println("=================== Total Power Data ====================")
+		log.Printf("PV Daily Power generation : %.2f W", collection.TotalPowerData.GetDailyPVPowerGeneration())
+		log.Printf("PV Total Power generation : %d W", collection.TotalPowerData.GetTotalPVPowerGeneration())
+		log.Printf("Load Daily Power consumption : %.2f W", collection.TotalPowerData.GetDailyLoadPowerConsumption())
+		log.Printf("Load Total Power consumption : %d W", collection.TotalPowerData.GetTotalLoadPowerConsumption())
+		log.Printf("Money Daily saving : %.2f", collection.TotalPowerData.GetDailyMoneySaving())
+		log.Printf("Money Total saving : %.2f", collection.TotalPowerData.GetTotalMoneySaving())
+		log.Printf("Datapoints for PV Power Day (48 points) : %v", collection.TotalPowerData.GetDayPVPower())
+		log.Printf("Datapoints for PV Power Month (31 points) : %v", collection.TotalPowerData.GetMonthPVPower())
+		log.Printf("Datapoints for PV Power Year (12 points) : %v", collection.TotalPowerData.GetYearPVPower())
+		log.Printf("Datapoints for PV Power History (5 points) : %v", collection.TotalPowerData.GetHistoryPVPower())
+		log.Printf("Daily Grid Consumtion : %.2f Wh", collection.TotalPowerData.GetDailyGridConsumption())
+		log.Printf("Total Grid Consumption : %d Wh", collection.TotalPowerData.GetTotalGridConsumption())
 	}
 }
 
