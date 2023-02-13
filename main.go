@@ -124,6 +124,8 @@ func logInverterCollectionData(collection common.InverterResponseCollection) {
 		log.Printf("Datapoints for PV Power Month (31 points) : %v", collection.TotalPowerData.GetMonthPVPower())
 		log.Printf("Datapoints for PV Power Year (12 points) : %v", collection.TotalPowerData.GetYearPVPower())
 		log.Printf("Datapoints for PV Power History (5 points) : %v", collection.TotalPowerData.GetHistoryPVPower())
+		log.Printf("Daily Grid Consumtion : %.2f Wh", collection.TotalPowerData.GetDailyGridConsumption())
+		log.Printf("Total Grid Consumption : %d Wh", collection.TotalPowerData.GetTotalGridConsumption())
 	}
 }
 

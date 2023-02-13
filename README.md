@@ -4,7 +4,7 @@
 
 The aim of this project is to proxify the Sermatec inverter to enable multiple connection to it.
 The reverse engineering of the Sermatec inverter communication protocol is based on these projects :
- - [Sermatec Inverter Python Lib](https://github.com/andreondra/sermatec-inverter)
+ - [Sermatec Inverter Python Lib](https://github.com/sermatec-opensource/sermatec-inverter)
  - [Sermatec Protocol extraction](https://github.com/sbechet/sermatec-ess)
 
 Thanks to :
@@ -68,7 +68,7 @@ make run-client-only
 The env file is generating at each run, concatenating `./application.example.env` with `./application.private.env` into a `./application.env`.
  * `./application.example.env` => provided in the repository with fake example data.
  * `./application.private.env` => created if not exists at first run using `make generate_env_file` recipes, excluded from commit, place here your specific setup (ip, polling interval, etc...).
- * `./application.env` => generated at each run, don't override date here, it will be useless, this env file is provided to application binary through docker-compose services.
+ * `./application.env` => generated at each run, don't override data here, it will be useless, this env file is provided to application binary through docker-compose services.
 
 ```env
 INVERTER_HOST=<INVERTER IP OT HOST>
